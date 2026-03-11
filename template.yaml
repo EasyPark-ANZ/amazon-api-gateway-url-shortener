@@ -185,7 +185,7 @@ Resources:
             OriginPath: /Prod
 
   ##   CloudFront access logs storage
-  CloudFrontAccessLogsBucket:
+CloudFrontAccessLogsBucket:
   Type: AWS::S3::Bucket
   Properties:
     # This enables the ACLs that CloudFront needs
