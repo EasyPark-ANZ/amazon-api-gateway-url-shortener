@@ -186,13 +186,14 @@ Resources:
 
   ##   CloudFront access logs storage
   CloudFrontAccessLogsBucket:
-    Type: AWS::S3::Bucket
-    Properties:
+  Type: AWS::S3::Bucket
+  Properties:
     # This enables the ACLs that CloudFront needs
     AccessControl: LogDeliveryWrite 
     OwnershipControls:
       Rules:
         - ObjectOwnership: ObjectWriter # This allows ACLs to be used
+    # ... other properties like BucketEncryption or LifecycleConfiguration
 
   ##   Amplify Application for hosting
   AmplifyApp:
