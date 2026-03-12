@@ -14,12 +14,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     authorized: false,
     links: []
@@ -43,7 +40,7 @@ export default new Vuex.Store({
     removeLink(state, ind){
       state.links.splice(ind, 1);
     },
-    updateLink(state, link, ind){
+    updateLink(state, { link, ind }){
       state.links[ind] = link;
     }
   },

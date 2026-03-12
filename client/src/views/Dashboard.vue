@@ -53,7 +53,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
                 {{ link.url }}
               </div>
               <div class="is-size-7">
-                <time>{{ link.timestamp | formatDate }}</time>
+                <time>{{ formatDate(link.timestamp) }}</time>
               </div>
             </div>
           </div>
@@ -146,6 +146,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
 <script>
 import { mapState } from "vuex";
 import axios from "axios";
+import moment from "moment";
 
 export default {
   name: "dashboard",
@@ -169,6 +170,9 @@ export default {
     ...mapState(["links"]),
   },
   methods: {
+    formatDate: function (value) {
+      return moment(value, 'DD/MMM/YYYY:HH:mm:ss Z').format("YYYY-MM-DD HH:mm:ss A")
+    },
     toggleModal: function (type, link = null, ind = 0) {
       this.model.id = this.model.url = ""; // hacky reset
       this.modalTypeCreate = type === "create";
@@ -225,7 +229,7 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             that.toggleModal();
-            that.$store.commit("updateLink", response.data, that.currentIndex);
+            that.$store.commit("updateLink", { link: response.data, ind: that.currentIndex });
           } else {
             alert("There was an issue deleting your SlipLink");
           }
