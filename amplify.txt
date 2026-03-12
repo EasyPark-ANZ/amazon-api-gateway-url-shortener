@@ -1,5 +1,5 @@
-aws amplify update-app --app-id d10sqxin5y5ztz --environment-variables \
+aws amplify update-app --app-id d3ncjmkul9vd9h --environment-variables \
 VUE_APP_NAME=shortener\
-,VUE_APP_CLIENT_ID=6e8hl9gn8i4ktkv0f1l54lccdc\
-,VUE_APP_API_ROOT=https://d18vv159oqn1jl.cloudfront.net\
+,VUE_APP_CLIENT_ID=55urb7mpdi8slur77u0deprkm0\
+,VUE_APP_API_ROOT= https://d2n0sd4i59ai9w.cloudfront.net\
 ,VUE_APP_AUTH_DOMAIN=https://shortener-685386557044.auth.ap-southeast-2.amazoncognito.com 
