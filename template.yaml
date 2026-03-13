@@ -99,22 +99,62 @@ Resources:
           Projection:
             ProjectionType: ALL
   
+  ##   Lambda: disable user after signup confirmation
+  DisableUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/disable-user/
+      Handler: index.handler
+      Runtime: nodejs22.x
+      Role: !GetAtt DisableUserFunctionRole.Arn
+
+  DisableUserFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: CognitoDisableUser
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: cognito-idp:AdminDisableUser
+                Resource: !GetAtt UserPool.Arn
+
+  DisableUserFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt DisableUserFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
+
   ##   Cognito user pool
   UserPool:
-    Type: AWS::Cognito::UserPool 
-    Properties: 
-      UserPoolName: !Sub ${AppName}-UserPool 
-      Policies: 
-        PasswordPolicy: 
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub ${AppName}-UserPool
+      Policies:
+        PasswordPolicy:
           MinimumLength: 8
       AutoVerifiedAttributes:
         - email
-      UsernameAttributes: 
-        - email 
-      Schema: 
-        - AttributeDataType: String 
-          Name: email 
+      UsernameAttributes:
+        - email
+      Schema:
+        - AttributeDataType: String
+          Name: email
           Required: false
+      LambdaConfig:
+        PostConfirmation: !GetAtt DisableUserFunction.Arn
 
   ##   Cognito user pool domain
   UserPoolDomain:
