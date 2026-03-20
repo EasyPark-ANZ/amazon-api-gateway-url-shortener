@@ -67,7 +67,6 @@ Conditions:
   IsLocal: !Equals [!Ref UseLocalClient, 'true']
   HasCustomDomain: !Not [!Equals [!Ref CustomDomain, 'none']]
   HasCustomDomainWww: !Not [!Equals [!Ref CustomDomainWww, 'none']]
-  HasApiCloudFrontDomain: !Not [!Equals [!Ref ApiCloudFrontDomain, '']]
 
 ###################################################################################################
 ##   Template Resources                                                                          ##
@@ -258,12 +257,9 @@ Resources:
               - node_modules/**/*
       IAMServiceRole: !GetAtt AmplifyRole.Arn
       CustomRules:
-        !If
-          - HasApiCloudFrontDomain
-          - - Source: "/<*>"
-              Target: !Sub "https://${ApiCloudFrontDomain}/<*>"
-              Status: "301"
-          - !Ref AWS::NoValue
+        - Source: "/<*>"
+          Target: !Sub "https://${ApiCloudFrontDomain}/<*>"
+          Status: "301"
 
   ##   Amplify Branch for hosting
   AmplifyBranch:
