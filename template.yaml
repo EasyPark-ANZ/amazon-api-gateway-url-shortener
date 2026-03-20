@@ -55,6 +55,10 @@ Parameters:
     Type: String
     Description: Okta OIDC client secret
     NoEcho: true
+  ApiCloudFrontDomain:
+    Type: String
+    Description: CloudFront domain for API Gateway (from VueAppAPIRoot stack output after first deployment, e.g. d15l4f3jg7etnr.cloudfront.net)
+    Default: ''
 
 ###################################################################################################
 ##   Template Conditions                                                                         ##
@@ -63,6 +67,7 @@ Conditions:
   IsLocal: !Equals [!Ref UseLocalClient, 'true']
   HasCustomDomain: !Not [!Equals [!Ref CustomDomain, 'none']]
   HasCustomDomainWww: !Not [!Equals [!Ref CustomDomainWww, 'none']]
+  HasApiCloudFrontDomain: !Not [!Equals [!Ref ApiCloudFrontDomain, '']]
 
 ###################################################################################################
 ##   Template Resources                                                                          ##
@@ -253,9 +258,12 @@ Resources:
               - node_modules/**/*
       IAMServiceRole: !GetAtt AmplifyRole.Arn
       CustomRules:
-        - Source: "/<*>"
-          Target: !Sub "https://${CloudFrontDistro.DomainName}/<*>"
-          Status: "301"
+        !If
+          - HasApiCloudFrontDomain
+          - - Source: "/<*>"
+              Target: !Sub "https://${ApiCloudFrontDomain}/<*>"
+              Status: "301"
+          - !Ref AWS::NoValue
 
   ##   Amplify Branch for hosting
   AmplifyBranch:
