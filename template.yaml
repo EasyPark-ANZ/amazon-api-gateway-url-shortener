@@ -41,6 +41,10 @@ Parameters:
     Type: String
     Description: Cstom domain added to client # only configures cognito for now. Manually handle domain on amplify console for client
     Default: none
+  CustomDomainWww:
+    Type: String
+    Description: www variant of custom domain (e.g. https://www.surl.epgateway.com.au)
+    Default: none
   OktaIssuerUrl:
     Type: String
     Description: Okta OIDC issuer URL (e.g. https://your-org.okta.com/oauth2/default)
@@ -58,6 +62,7 @@ Parameters:
 Conditions:
   IsLocal: !Equals [!Ref UseLocalClient, 'true']
   HasCustomDomain: !Not [!Equals [!Ref CustomDomain, 'none']]
+  HasCustomDomainWww: !Not [!Equals [!Ref CustomDomainWww, 'none']]
 
 ###################################################################################################
 ##   Template Resources                                                                          ##
@@ -158,10 +163,12 @@ Resources:
         - !Join [ ".", [ https://master, !GetAtt AmplifyApp.DefaultDomain ]]
         - !If [IsLocal, http://localhost:8080, !Ref "AWS::NoValue"]
         - !If [HasCustomDomain, !Ref CustomDomain, !Ref "AWS::NoValue"]
+        - !If [HasCustomDomainWww, !Ref CustomDomainWww, !Ref "AWS::NoValue"]
       LogoutURLs:
         - !Join [ ".", [ https://master, !GetAtt AmplifyApp.DefaultDomain ]]
         - !If [IsLocal, http://localhost:8080, !Ref "AWS::NoValue"]
         - !If [HasCustomDomain, !Ref CustomDomain, !Ref "AWS::NoValue"]
+        - !If [HasCustomDomainWww, !Ref CustomDomainWww, !Ref "AWS::NoValue"]
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthFlows:
         - code
