@@ -72,7 +72,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
             >
             <a
               target="_blank"
-              :href="apiUrl + '/' + link.id"
+              :href="shortDomain + '/' + link.id"
               class="card-footer-item"
               >Try it</a
             >
@@ -153,6 +153,7 @@ export default {
   data() {
     return {
       apiUrl: process.env.VUE_APP_API_ROOT,
+      shortDomain: window.location.origin,
       modalIsActive: false,
       model: {
         id: "",
