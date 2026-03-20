@@ -252,6 +252,10 @@ Resources:
             paths:
               - node_modules/**/*
       IAMServiceRole: !GetAtt AmplifyRole.Arn
+      CustomRules:
+        - Source: "/<*>"
+          Target: !Sub "https://${CloudFrontDistro.DomainName}/<*>"
+          Status: "301"
 
   ##   Amplify Branch for hosting
   AmplifyBranch:

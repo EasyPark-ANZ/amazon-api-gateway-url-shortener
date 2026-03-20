@@ -22,13 +22,6 @@ const routes = [
     path: '/',
     name: 'dashboard',
     component: Dashboard
-  },
-  {
-    path: '/:linkId',
-    beforeEnter(to) {
-      window.location.href = `${process.env.VUE_APP_API_ROOT}/${to.params.linkId}`
-    },
-    component: { template: '<div></div>' }
   }
 ]
 
