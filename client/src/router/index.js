@@ -22,6 +22,17 @@ const routes = [
     path: '/',
     name: 'dashboard',
     component: Dashboard
+  },
+  {
+    path: '/:linkId(.*)',
+    beforeEnter(to) {
+      const apiRoot = process.env.VUE_APP_API_ROOT
+      if (apiRoot) {
+        const linkId = to.params.linkId.replace(/\/+$/, '')
+        window.location.replace(`${apiRoot}/${linkId}`)
+      }
+    },
+    component: { template: '<div></div>' }
   }
 ]
 
