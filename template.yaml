@@ -55,9 +55,9 @@ Parameters:
     Type: String
     Description: Okta OIDC client secret
     NoEcho: true
-  ApiCloudFrontDomain:
+  AcmCertificateArn:
     Type: String
-    Description: CloudFront domain for API Gateway (from VueAppAPIRoot stack output after first deployment, e.g. d15l4f3jg7etnr.cloudfront.net)
+    Description: ACM certificate ARN in us-east-1 for the custom domain (required for CloudFront)
     Default: ''
 
 ###################################################################################################
@@ -67,6 +67,8 @@ Conditions:
   IsLocal: !Equals [!Ref UseLocalClient, 'true']
   HasCustomDomain: !Not [!Equals [!Ref CustomDomain, 'none']]
   HasCustomDomainWww: !Not [!Equals [!Ref CustomDomainWww, 'none']]
+  HasAcmCertificate: !Not [!Equals [!Ref AcmCertificateArn, '']]
+  HasCustomDomainAlias: !And [!Condition HasCustomDomain, !Condition HasAcmCertificate]
 
 ###################################################################################################
 ##   Template Resources                                                                          ##
@@ -184,9 +186,19 @@ Resources:
   ##   CloudFront distribution
   CloudFrontDistro:
     Type: AWS::CloudFront::Distribution
-    Properties: 
+    Properties:
       DistributionConfig:
         Comment: URL Shortener CDN
+        Aliases: !If
+          - HasCustomDomainAlias
+          - - !Select [1, !Split ["//", !Ref CustomDomain]]
+          - !Ref AWS::NoValue
+        ViewerCertificate: !If
+          - HasCustomDomainAlias
+          - AcmCertificateArn: !Ref AcmCertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
         DefaultCacheBehavior:
           AllowedMethods: ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
           CachedMethods: ["GET", "HEAD", "OPTIONS"]
@@ -199,12 +211,41 @@ Resources:
             - Origin
             - Authorization
             QueryString: false
-          TargetOriginId: "URLShortenerAPIGW"
+          TargetOriginId: "APIGWWithAmplifyFallback"
           ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+          - PathPattern: "/app"
+            AllowedMethods: ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+            CachedMethods: ["GET", "HEAD", "OPTIONS"]
+            Compress: true
+            DefaultTTL: 0
+            ForwardedValues:
+              Headers:
+              - Access-Control-Request-Headers
+              - Access-Control-Request-Method
+              - Origin
+              - Authorization
+              QueryString: false
+            TargetOriginId: "URLShortenerAPIGW"
+            ViewerProtocolPolicy: redirect-to-https
+          - PathPattern: "/app/*"
+            AllowedMethods: ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+            CachedMethods: ["GET", "HEAD", "OPTIONS"]
+            Compress: true
+            DefaultTTL: 0
+            ForwardedValues:
+              Headers:
+              - Access-Control-Request-Headers
+              - Access-Control-Request-Method
+              - Origin
+              - Authorization
+              QueryString: false
+            TargetOriginId: "URLShortenerAPIGW"
+            ViewerProtocolPolicy: redirect-to-https
         CustomErrorResponses:
         - ErrorCachingMinTTL: 0
           ErrorCode: 400
-        - ErrorCachingMinTTL: 1
+        - ErrorCachingMinTTL: 0
           ErrorCode: 403
         - ErrorCachingMinTTL: 5
           ErrorCode: 500
@@ -217,6 +258,25 @@ Resources:
             DomainName: !Sub ${SiteAPI}.execute-api.${AWS::Region}.amazonaws.com
             Id: "URLShortenerAPIGW"
             OriginPath: /Prod
+          - CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
+            DomainName: !Join [".", ["master", !GetAtt AmplifyApp.DefaultDomain]]
+            Id: "AmplifyApp"
+        OriginGroups:
+          Quantity: 1
+          Items:
+            - Id: "APIGWWithAmplifyFallback"
+              FailoverCriteria:
+                StatusCodes:
+                  Quantity: 4
+                  Items: [403, 404, 500, 502]
+              Members:
+                Quantity: 2
+                Items:
+                  - OriginId: "URLShortenerAPIGW"
+                  - OriginId: "AmplifyApp"
 
   ##   CloudFront access logs storage
   CloudFrontAccessLogsBucket:
@@ -515,7 +575,10 @@ Outputs:
 
   VueAppAPIRoot:
     Description: API Gateway endpoint URL for linker
-    Value: !Sub "https://${CloudFrontDistro.DomainName}"
+    Value: !If
+      - HasCustomDomainAlias
+      - !Ref CustomDomain
+      - !Sub "https://${CloudFrontDistro.DomainName}"
  
   VueAppAuthDomain: 
     Description: Domain used for authentication
@@ -538,7 +601,7 @@ Outputs:
     Value: !Sub
       - aws amplify update-app --app-id ${AmplifyID} --environment-variables VUE_APP_NAME=${AppName},VUE_APP_CLIENT_ID=${UserPoolClient},VUE_APP_API_ROOT=${APIRoot},VUE_APP_AUTH_DOMAIN=${APIAuthDomain}
       - AmplifyID: !GetAtt AmplifyApp.AppId
-        APIRoot: !Join ["", [ "https://", !GetAtt CloudFrontDistro.DomainName]]
+        APIRoot: !If [HasCustomDomainAlias, !Ref CustomDomain, !Join ["", ["https://", !GetAtt CloudFrontDistro.DomainName]]]
         APIAuthDomain: !Sub https://${AppName}-${AWS::AccountId}.auth.${AWS::Region}.amazoncognito.com
 
   AmplifyDeployCommand:
