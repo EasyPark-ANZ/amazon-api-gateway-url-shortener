@@ -73,6 +73,22 @@ body {
   color: #8704AF !important;
 }
 
+// Card footer links
+.card-footer-item {
+  color: #8704AF !important;
+}
+.card-footer-item:hover {
+  color: #5F016F !important;
+  background-color: #FFE5F7 !important;
+}
+.card-footer-item.is-danger {
+  color: #FF33BB !important;
+}
+.card-footer-item.is-danger:hover {
+  color: #C828C5 !important;
+  background-color: #FFE5F7 !important;
+}
+
 // Danger buttons — use arrive hot pink
 .button.is-danger.is-outlined {
   border-color: #FF33BB !important;

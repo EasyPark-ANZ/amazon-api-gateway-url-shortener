@@ -100,8 +100,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
             <a
               v-on:click="deleteLink(link.id, i)"
               href="#"
-              class="card-footer-item"
-              >Delete</a
+              class="card-footer-item is-danger"
+              >Delete</
             >
             <a
               target="_blank"
