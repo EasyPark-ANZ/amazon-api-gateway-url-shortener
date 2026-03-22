@@ -167,11 +167,13 @@ Resources:
         - OktaSSO
       CallbackURLs:
         - !Join [ ".", [ https://master, !GetAtt AmplifyApp.DefaultDomain ]]
+        - !Join [ ".", [ https://staging, !GetAtt AmplifyApp.DefaultDomain ]]
         - !If [IsLocal, http://localhost:8080, !Ref "AWS::NoValue"]
         - !If [HasCustomDomain, !Ref CustomDomain, !Ref "AWS::NoValue"]
         - !If [HasCustomDomainWww, !Ref CustomDomainWww, !Ref "AWS::NoValue"]
       LogoutURLs:
         - !Join [ ".", [ https://master, !GetAtt AmplifyApp.DefaultDomain ]]
+        - !Join [ ".", [ https://staging, !GetAtt AmplifyApp.DefaultDomain ]]
         - !If [IsLocal, http://localhost:8080, !Ref "AWS::NoValue"]
         - !If [HasCustomDomain, !Ref CustomDomain, !Ref "AWS::NoValue"]
         - !If [HasCustomDomainWww, !Ref CustomDomainWww, !Ref "AWS::NoValue"]
@@ -348,7 +350,7 @@ Resources:
           Target: "/index.html"
           Status: "200"
 
-  ##   Amplify Branch for hosting
+  ##   Amplify Branch for hosting (production)
   AmplifyBranch:
     Type: AWS::Amplify::Branch
     Properties:
@@ -356,6 +358,17 @@ Resources:
       AppId: !GetAtt AmplifyApp.AppId
       Description: Master Branch
       EnableAutoBuild: true
+      Stage: PRODUCTION
+
+  ##   Amplify Branch for hosting (staging)
+  AmplifyBranchStaging:
+    Type: AWS::Amplify::Branch
+    Properties:
+      BranchName: staging
+      AppId: !GetAtt AmplifyApp.AppId
+      Description: Staging Branch
+      EnableAutoBuild: true
+      Stage: DEVELOPMENT
 
 ###################################################################################################
 ##   IAM Roles                                                                                   ##
@@ -616,8 +629,12 @@ Outputs:
     Value: !Ref UserPoolClient
 
   ClientDomainAddress:
-    Description: Domain for client
+    Description: Domain for client (production)
     Value: !Join [ ".", [ https://master, !GetAtt AmplifyApp.DefaultDomain ]]
+
+  StagingDomainAddress:
+    Description: Domain for client (staging)
+    Value: !Join [ ".", [ https://staging, !GetAtt AmplifyApp.DefaultDomain ]]
 
   AmplifyAppId:
     Description: Amplify application ID
