@@ -101,7 +101,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
               v-on:click="deleteLink(link.id, i)"
               href="#"
               class="card-footer-item is-danger"
-              >Delete</
+              >Delete</a
             >
             <a
               target="_blank"
