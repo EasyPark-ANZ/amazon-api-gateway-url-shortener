@@ -27,9 +27,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
               class="button"
               :class="{ 'is-info': viewMode === 'card' }"
               v-on:click="viewMode = 'card'"
-              title="Card view"
             >
               <span class="icon"><i class="fas fa-th"></i></span>
+              <span>Card</span>
             </button>
           </p>
           <p class="control">
@@ -37,9 +37,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
               class="button"
               :class="{ 'is-info': viewMode === 'list' }"
               v-on:click="viewMode = 'list'"
-              title="List view"
             >
               <span class="icon"><i class="fas fa-list"></i></span>
+              <span>List</span>
             </button>
           </p>
         </div>

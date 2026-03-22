@@ -1,7 +1,50 @@
 @import "~bulma/bulma";
 
-.text-clip{
-    overflow:hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.text-clip {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Arrive.com colour palette
+body {
+  background-color: #F9F5F4;
+}
+
+.navbar.is-dark {
+  background-color: #38003D !important;
+}
+
+.has-background-info {
+  background-color: #5F016F !important;
+}
+
+.button.is-info:not(.is-outlined):not(.is-light) {
+  background-color: #8704AF !important;
+  border-color: #8704AF !important;
+  color: #fff !important;
+}
+.button.is-info:not(.is-outlined):not(.is-light):hover,
+.button.is-info:not(.is-outlined):not(.is-light):focus {
+  background-color: #5F016F !important;
+  border-color: #5F016F !important;
+}
+
+.button.is-info.is-outlined {
+  border-color: #8704AF !important;
+  color: #8704AF !important;
+}
+.button.is-info.is-outlined:hover,
+.button.is-info.is-outlined:focus {
+  background-color: #8704AF !important;
+  border-color: #8704AF !important;
+  color: #fff !important;
+}
+
+.table thead th {
+  color: #38003D;
+}
+
+.title {
+  color: #38003D;
 }
