@@ -214,6 +214,33 @@ Resources:
           TargetOriginId: "APIGWWithAmplifyFallback"
           ViewerProtocolPolicy: redirect-to-https
         CacheBehaviors:
+          - PathPattern: "/js/*"
+            AllowedMethods: ["GET", "HEAD"]
+            CachedMethods: ["GET", "HEAD"]
+            Compress: true
+            DefaultTTL: 86400
+            ForwardedValues:
+              QueryString: false
+            TargetOriginId: "AmplifyApp"
+            ViewerProtocolPolicy: redirect-to-https
+          - PathPattern: "/css/*"
+            AllowedMethods: ["GET", "HEAD"]
+            CachedMethods: ["GET", "HEAD"]
+            Compress: true
+            DefaultTTL: 86400
+            ForwardedValues:
+              QueryString: false
+            TargetOriginId: "AmplifyApp"
+            ViewerProtocolPolicy: redirect-to-https
+          - PathPattern: "/favicon.ico"
+            AllowedMethods: ["GET", "HEAD"]
+            CachedMethods: ["GET", "HEAD"]
+            Compress: true
+            DefaultTTL: 86400
+            ForwardedValues:
+              QueryString: false
+            TargetOriginId: "AmplifyApp"
+            ViewerProtocolPolicy: redirect-to-https
           - PathPattern: "/app"
             AllowedMethods: ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
             CachedMethods: ["GET", "HEAD", "OPTIONS"]
