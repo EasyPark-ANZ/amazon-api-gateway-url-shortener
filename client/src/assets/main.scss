@@ -49,6 +49,17 @@ body {
   color: #38003D;
 }
 
+.subtitle {
+  color: #5F016F;
+}
+
+a:not(.navbar-item):not(.card-footer-item):not(.button) {
+  color: #8704AF;
+}
+a:not(.navbar-item):not(.card-footer-item):not(.button):hover {
+  color: #5F016F;
+}
+
 // Modal
 .modal-card-head {
   background-color: #5F016F !important;
