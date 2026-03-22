@@ -16,9 +16,46 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
 
 <template>
   <div class="dashboard">
-    <div class="columns is-mobile">
+    <div class="columns is-mobile is-vcentered">
       <div class="column">
         <h1 class="title">Shortcuts</h1>
+      </div>
+      <div class="column is-narrow">
+        <div class="field has-addons">
+          <p class="control">
+            <button
+              class="button"
+              :class="{ 'is-info': viewMode === 'card' }"
+              v-on:click="viewMode = 'card'"
+              title="Card view"
+            >
+              <span class="icon"><i class="fas fa-th"></i></span>
+            </button>
+          </p>
+          <p class="control">
+            <button
+              class="button"
+              :class="{ 'is-info': viewMode === 'list' }"
+              v-on:click="viewMode = 'list'"
+              title="List view"
+            >
+              <span class="icon"><i class="fas fa-list"></i></span>
+            </button>
+          </p>
+        </div>
+      </div>
+      <div class="column is-3-desktop is-half-mobile">
+        <div class="field">
+          <div class="control has-icons-left">
+            <input
+              class="input"
+              type="text"
+              placeholder="Search by shortcode…"
+              v-model="searchQuery"
+            />
+            <span class="icon is-left"><i class="fas fa-search"></i></span>
+          </div>
+        </div>
       </div>
       <div class="column is-2-desktop is-half-mobile">
         <button
@@ -30,10 +67,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
       </div>
     </div>
 
-    <div class="columns is-multiline">
+    <!-- Card view -->
+    <div class="columns is-multiline" v-if="viewMode === 'card'">
       <div
         class="column is-one-third"
-        v-for="(link, i) in links"
+        v-for="(link, i) in filteredLinks"
         v-bind:key="link.id"
       >
         <div class="card">
@@ -41,11 +79,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
             <p class="card-header-title has-text-white">
               {{ link.id }}
             </p>
-            <a href="#" class="card-header-icon" aria-label="more options">
-              <span class="icon">
-                <i class="fas fa-angle-down" aria-hidden="true"></i>
-              </span>
-            </a>
           </header>
           <div class="card-content">
             <div class="content">
@@ -79,6 +112,40 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
           </footer>
         </div>
       </div>
+      <div class="column" v-if="filteredLinks.length === 0">
+        <p class="has-text-grey">No shortcuts match your search.</p>
+      </div>
+    </div>
+
+    <!-- List view -->
+    <div v-if="viewMode === 'list'">
+      <table class="table is-fullwidth is-hoverable">
+        <thead>
+          <tr>
+            <th>Shortcode</th>
+            <th>URL</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(link, i) in filteredLinks" v-bind:key="link.id">
+            <td><strong>{{ link.id }}</strong></td>
+            <td class="text-clip" :title="link.url" style="max-width: 400px;">{{ link.url }}</td>
+            <td class="is-size-7"><time>{{ formatDate(link.timestamp) }}</time></td>
+            <td>
+              <div class="buttons are-small">
+                <button class="button is-info is-outlined" v-on:click="toggleModal('edit', link, i)">Edit</button>
+                <button class="button is-danger is-outlined" v-on:click="deleteLink(link.id, i)">Delete</button>
+                <a class="button is-success is-outlined" target="_blank" :href="shortDomain + '/' + link.id">Try it</a>
+              </div>
+            </td>
+          </tr>
+          <tr v-if="filteredLinks.length === 0">
+            <td colspan="4" class="has-text-grey">No shortcuts match your search.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Edit Modal -->
@@ -162,6 +229,8 @@ export default {
       currentLink: {},
       currentIndex: 0,
       modalTypeCreate: true,
+      searchQuery: "",
+      viewMode: "card",
     };
   },
   created() {
@@ -169,6 +238,11 @@ export default {
   },
   computed: {
     ...mapState(["links"]),
+    filteredLinks() {
+      const q = this.searchQuery.trim().toLowerCase();
+      if (!q) return this.links;
+      return this.links.filter((link) => link.id.toLowerCase().includes(q));
+    },
   },
   methods: {
     formatDate: function (value) {
