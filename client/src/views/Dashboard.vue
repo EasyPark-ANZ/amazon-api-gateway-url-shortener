@@ -137,7 +137,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
               <div class="buttons are-small">
                 <button class="button is-info is-outlined" v-on:click="toggleModal('edit', link, i)">Edit</button>
                 <button class="button is-danger is-outlined" v-on:click="deleteLink(link.id, i)">Delete</button>
-                <a class="button is-success is-outlined" target="_blank" :href="shortDomain + '/' + link.id">Try it</a>
+                <a class="button is-info is-outlined" target="_blank" :href="shortDomain + '/' + link.id">Try it</a>
               </div>
             </td>
           </tr>

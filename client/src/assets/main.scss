@@ -72,3 +72,15 @@ body {
 .has-text-info {
   color: #8704AF !important;
 }
+
+// Danger buttons — use arrive hot pink
+.button.is-danger.is-outlined {
+  border-color: #FF33BB !important;
+  color: #FF33BB !important;
+}
+.button.is-danger.is-outlined:hover,
+.button.is-danger.is-outlined:focus {
+  background-color: #FF33BB !important;
+  border-color: #FF33BB !important;
+  color: #fff !important;
+}
