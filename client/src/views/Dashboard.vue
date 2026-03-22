@@ -196,11 +196,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
           <button
             v-if="modalTypeCreate"
             v-on:click="createLink()"
-            class="button is-success"
+            class="button is-info"
           >
             Create
           </button>
-          <button v-else v-on:click="updateLink()" class="button is-success">
+          <button v-else v-on:click="updateLink()" class="button is-info">
             Update
           </button>
           <button class="button" v-on:click="toggleModal()">Cancel</button>

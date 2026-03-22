@@ -48,3 +48,27 @@ body {
 .title {
   color: #38003D;
 }
+
+// Modal
+.modal-card-head {
+  background-color: #5F016F !important;
+  border-bottom: none;
+}
+.modal-card-title {
+  color: #fff !important;
+}
+.modal-card-head .delete {
+  background-color: rgba(255,255,255,0.2);
+}
+.modal-card-head .delete:hover {
+  background-color: rgba(255,255,255,0.4);
+}
+.modal-card-foot {
+  background-color: #F9F5F4 !important;
+  border-top: 1px solid #E3DFDD !important;
+}
+
+// Info text colour
+.has-text-info {
+  color: #8704AF !important;
+}
