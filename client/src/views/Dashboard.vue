@@ -215,6 +215,9 @@ import { mapState } from "vuex";
 import axios from "axios";
 import moment from "moment";
 
+const appEnv = process.env.VUE_APP_ENVIRONMENT || "production";
+axios.defaults.headers.common["X-App-Env"] = appEnv;
+
 export default {
   name: "dashboard",
   data() {

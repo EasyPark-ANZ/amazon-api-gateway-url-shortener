@@ -254,6 +254,7 @@ Resources:
               - Access-Control-Request-Method
               - Origin
               - Authorization
+              - X-App-Env
               QueryString: false
             TargetOriginId: "URLShortenerAPIGW"
             ViewerProtocolPolicy: redirect-to-https
@@ -268,6 +269,7 @@ Resources:
               - Access-Control-Request-Method
               - Origin
               - Authorization
+              - X-App-Env
               QueryString: false
             TargetOriginId: "URLShortenerAPIGW"
             ViewerProtocolPolicy: redirect-to-https
